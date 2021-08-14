@@ -1,7 +1,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import cmath
+import matplotlib.colors as colors
 
 plt.style.use(["science", "notebook"])
 
@@ -11,22 +11,31 @@ y = np.linspace(-4, 4, 15)
 
 x,y = np.meshgrid(x,y)
 
-x_shape = x.shape
+def f(a,b):
+    return np.cos(b) * a
 
-y2 = np.zeros(x_shape)
-x2 = np.zeros(x_shape)
-
-for i in range(x_shape[0]):
-    for j in range(x_shape[1]):
-        X = x[i,j]
-        Y = y[i,j]
-        x2[i,j] = np.cos(Y)
-        y2[i,j] = np.sin(X)
+def g(a,b):
+    return np.sin(a) * b
 
 fig, ax = plt.subplots()
 
+r = ( f(x,y)**2 + g(x,y)**2 )**(1/2)
+
 ax.plot(x,y, marker='.', color='k', linestyle='none')
-q = ax.quiver(x, y, x2, y2, units='xy' ,scale = 1.5, color='red')
+
+Q  = ax.quiver( x, y, f(x,y)/r, g(x,y)/r, r,
+                scale = 20, cmap = 'bwr',
+                norm = colors.Normalize( vmin = r.min(),vmax = r.max()) )
+
+fig.colorbar(Q,extend='max')
+
+
+#Q  = ax.quiver(x, y, f(x,y)/r, g(x,y)/r, r,
+#               scale = 20, cmap = 'coolwarm',
+#               norm=colors.Normalize(vmin=r.min(),vmax=r.max())
+#               )
+#for if you dont want a vector field with only unit vectors
+
 
 ax.grid()
 
